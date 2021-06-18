@@ -1,0 +1,48 @@
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+import time
+
+class parsing:
+	nickname = '1'
+	pages = 100
+pa = parsing()
+
+def choice():
+	change = input('Если хотите узнать наличие участника в топе, введите S иначе N\n')
+	if change[0] == 'S':
+		pa.nickname = input('Введите никнейм пользователя: ')
+		parcer()
+	else:
+		pa.pages = int(input('Введите количество страниц: '))
+		parcer()
+
+def parcer():
+	driver = webdriver.Chrome()
+	driver.get('https://hwbot.org/')
+	driver.minimize_window()
+	btn_elem = driver.find_element_by_class_name('right')
+	for i in range(pa.pages):
+		time.sleep(1)
+		btn_elem = driver.find_element_by_class_name('right')
+		points = driver.find_elements_by_xpath("//tbody//tr[@id]//td[6]")
+		score = driver.find_elements_by_xpath("//tbody//tr[@id]//td[5]")
+		user = driver.find_elements_by_xpath("//tbody//tr[@id]//td[4]")
+		freq = driver.find_elements_by_xpath("//tbody//tr[@id]//td[3]")
+		hardware = driver.find_elements_by_xpath("//tbody//tr[@id]//td[2]")
+		benchmark = driver.find_elements_by_xpath("//tbody//tr//td//a[@target='_blank']")
+		if pa.nickname == '1':
+			print ('-------- Страница номер ' + str(i+1) + ' --------')
+			for j in range(len(points)):
+				print ('user - ' + user[j].text + '\nbenchmark - ' + benchmark[j].text + '\npoints - ' + points[j].text + '\nfreq - ' + freq[j].text + '\nhardware - ' + hardware[j].text + '\nscore - ' + score[j].text + '\n\n')
+		else:
+			for j in range(len(points)):
+				if user[j].text == pa.nickname:
+					print ('user - ' + user[j].text + '\nbenchmark - ' + benchmark[j].text + '\npoints - ' + points[j].text + '\nfreq - ' + freq[j].text + '\nhardware - ' + hardware[j].text + '\nscore - ' + score[j].text + '\n\n')
+		if len(user) < 10:
+			break
+		btn_elem.click()
+
+	driver.close()
+
+if __name__ == '__main__':
+	choice()
